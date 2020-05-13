@@ -17,6 +17,15 @@ export default function Form() {
     terms: false
   })
 
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true); 
+  const [post, setPost] = useState([]);
+
+  useEffect(() => {
+    formSchema.isValid(formState).then(valid => {
+      setIsButtonDisabled(!valid)
+    })
+  }, [formState])
+
   const [errorState, setErrors] = useState({
     name: "",
     email: "",
@@ -51,26 +60,16 @@ export default function Form() {
     setFormState({...formState, [e.target.name]: value});
   }
 
-  const [users, setUsers] = useState([]);
-
-  // useEffect(() => {
-  //   formSchema.isValid(formState).then(valid => {
-  //     setButtonDisabled(!valid)
-  //   })
-  // }, [formState])
-
   const formSubmit = e => {
     e.preventDefault()
     console.log('form submitted!')
     axios
       .post("https://reqres.in/api/users", formState)
-      .then(response => 
-        setUsers(response),
-        console.log(response))
-      .catch(err => console.log(err))
+      .then(response => {
+        setPost(response.data)
+      }).catch(err => console.log(err))
   }
 
-  <pre>{JSON.stringify(users,null,2)}</pre>
 
   return (
     <form onSubmit={formSubmit}>
@@ -126,7 +125,9 @@ export default function Form() {
           <p className="error">{errorState.terms}</p>
         ) : null}
       </label>
-      <button>Submit</button>
+      <pre>{JSON.stringify(post,null,2)}</pre>
+      <button type="submit" disabled={isButtonDisabled}>Submit</button>
+      
     </form>
   )
 }
