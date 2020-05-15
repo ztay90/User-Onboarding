@@ -66,7 +66,7 @@ export default function Form() {
     axios
       .post("https://reqres.in/api/users", formState)
       .then(response => {
-        setPost(response.data)
+        setPost([...post, response.data])
       }).catch(err => console.log(err))
   }
 
